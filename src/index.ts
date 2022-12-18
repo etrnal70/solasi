@@ -1,7 +1,11 @@
 import dotenv from "dotenv";
 import express, { Express } from "express";
+import { questionRoute } from "./core/question/question.route";
+import { replyRoute } from "./core/reply/reply.route";
+import { topicRoute } from "./core/topic/topic.route";
 import { userRoute } from "./core/user/user.route";
 import { uploadRoute } from "./utils/upload/upload.route";
+
 dotenv.config();
 
 const PORT: number = parseInt(process.env.PORT as string, 10);
@@ -12,6 +16,9 @@ server.use(express.static("public"));
 
 server.use(uploadRoute);
 server.use(userRoute);
+server.use(topicRoute);
+server.use(questionRoute);
+server.use(replyRoute);
 
 async function start(): Promise<void> {
     try {

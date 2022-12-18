@@ -3,8 +3,7 @@ import { dbConn } from "../../utils/db";
 import { QuestionInput } from "./question.schema";
 
 export async function createQuestion(data: QuestionInput, topicId: number, authorId: number) {
-    // TODO Handle based on question type
-    if (data.type == "MULTIPLE_CHOICE") {
+    if (data.type == QuestionType.MULTIPLE_CHOICE) {
         const question = await dbConn.question.create({
             data: {
                 authorId,

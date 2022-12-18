@@ -21,7 +21,6 @@ model User {
   profileName  String?
   profileImage String?
   description  String?
-  // role         String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

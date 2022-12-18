@@ -14,12 +14,28 @@ const question = z.object({
     choices: choice,
 });
 
-const questionInputSchema = z.object({
+export const questionCreateSchema = z.object({
     body: z.object({
         question,
     }),
     params: z.object({
         topicId: z.number(),
+    }),
+});
+
+export const questionUpdateSchema = z.object({
+    body: z.object({
+        question,
+    }),
+    params: z.object({
+        questionId: z.number(),
+    }),
+});
+
+export const questionFindSchema = z.object({
+    query: z.object({
+        keyword: z.string(),
+        type: z.nativeEnum(QuestionType),
     }),
 });
 

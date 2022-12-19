@@ -49,8 +49,8 @@ export async function userRefresh(req: Request, res: Response) {}
 
 export async function userFind(req: Request, res: Response) {
   try {
-    const { keyword, scope } = req.query;
-    const users = await findUser(scope as string, keyword as string);
+    const { keyword } = req.query;
+    const users = await findUser(keyword as string);
 
     return res.status(200).json(users);
   } catch (e) {

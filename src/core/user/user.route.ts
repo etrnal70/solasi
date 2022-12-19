@@ -2,13 +2,13 @@ import { Router } from "express";
 import { verifyAccessToken } from "../../utils/auth/auth.helper";
 import { validate } from "../../utils/validate/validate.helper";
 import {
-    userFind,
-    userGetPersonalProfile,
-    userGetProfile,
-    userLogin,
-    userLogout,
-    userRegister,
-    userUpdateProfile,
+  userFind,
+  userGetPersonalProfile,
+  userGetProfile,
+  userLogin,
+  userLogout,
+  userRegister,
+  userUpdateProfile,
 } from "./user.controller";
 import { userFindSchema, userLoginSchema, userProfileUpdateSchema, userRegisterSchema } from "./user.schema";
 

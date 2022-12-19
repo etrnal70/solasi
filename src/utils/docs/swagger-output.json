@@ -13,7 +13,7 @@
   "paths": {
     "/register": {
       "post": {
-        "description": "",
+        "description": "Some description...",
         "parameters": [],
         "responses": {
           "201": {

@@ -7,7 +7,7 @@ import { replyCreateSchema, replyGetSchema, replyUpdateSchema, replyVoteSchema }
 export const replyRoute: Router = Router();
 
 replyRoute.post("/question/:questionId/reply", verifyAccessToken, validate(replyCreateSchema), replyCreate);
-replyRoute.post("/reply/:replyId", verifyAccessToken, validate(replyUpdateSchema), replyUpdate);
+replyRoute.put("/reply/:replyId", verifyAccessToken, validate(replyUpdateSchema), replyUpdate);
 replyRoute.get("/question/:questionId/reply", validate(replyGetSchema), replyGet);
 replyRoute.post("/reply/:replyId/upvote", verifyAccessToken, validate(replyVoteSchema), replyUpvote);
 replyRoute.post("/reply/:replyId/downvote", verifyAccessToken, validate(replyVoteSchema), replyDownvote);

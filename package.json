@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon ./src/index.ts",
     "migrate": "prisma migrate dev",
-    "schema_format": "prisma format schema.prisma"
+    "schema_format": "prisma format schema.prisma",
+    "gen_docs": "ts-node ./src/utils/docs/generateDocs.ts"
   },
   "keywords": [],
   "author": "",

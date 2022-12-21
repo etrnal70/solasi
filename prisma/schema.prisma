@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch","filteredRelationCount"]
+  previewFeatures = ["fullTextSearch", "filteredRelationCount"]
 }
 
 datasource db {
@@ -69,7 +69,7 @@ model Question {
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
 
-  choices QuestionChoice[] @relation("questionChoice")
+  choices QuestionChoice? @relation("questionChoice")
   replies Reply[]
 }
 
@@ -82,7 +82,7 @@ model QuestionChoice {
   id         Int      @id @default(autoincrement())
   body       String
   question   Question @relation("questionChoice", fields: [questionId], references: [id])
-  questionId Int
+  questionId Int      @unique
 }
 
 model Reply {
@@ -108,7 +108,7 @@ model Upvote {
   reply     Reply @relation(fields: [replyId], references: [id])
   replyId   Int
 
-  @@id([userId, givenById ,replyId])
+  @@id([userId, givenById, replyId])
 }
 
 model Downvote {
@@ -119,5 +119,5 @@ model Downvote {
   reply     Reply @relation(fields: [replyId], references: [id])
   replyId   Int
 
-  @@id([userId, givenById ,replyId])
+  @@id([userId, givenById, replyId])
 }

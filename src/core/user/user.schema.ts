@@ -1,44 +1,40 @@
 import { z } from "zod";
 
-const user = z.object({
-  email: z.string(),
-  password: z.string(),
+const userBody = z.object({
+    email: z.string().email(),
+    password: z.string(),
 });
 
-const userProfile = z.object({
-  username: z.string().optional(),
-  email: z.string().optional(),
-  password: z.string().optional(),
-  profileName: z.string().optional(),
-  profileImage: z.string().url().optional(),
-  description: z.string().optional(),
+const userProfileBody = z.object({
+    username: z.string().optional(),
+    email: z.string().optional(),
+    password: z.string().optional(),
+    profileName: z.string().optional(),
+    profileImage: z.string().url().optional(),
+    description: z.string().optional(),
 });
 
 export const userRegisterSchema = z.object({
-  body: z.object({
-    user,
-  }),
+    body: userBody,
 });
 
 export const userFindSchema = z.object({
-  query: z.object({
-    keyword: z.string(),
-  }),
+    query: z.object({
+        keyword: z.string(),
+    }),
 });
 
 export const userGetProfileSchema = z.object({
-  params: z.object({
-    userId: z.number(),
-  }),
+    params: z.object({
+        userId: z.string(),
+    }),
 });
 
 export const userProfileUpdateSchema = z.object({
-  body: z.object({
-    userProfile,
-  }),
+    body: userProfileBody,
 });
 
 export const userLoginSchema = userRegisterSchema;
 
-export type UserCore = z.infer<typeof user>;
-export type UserProfile = z.infer<typeof userProfile>;
+export type UserCore = z.infer<typeof userBody>;
+export type UserProfile = z.infer<typeof userProfileBody>;

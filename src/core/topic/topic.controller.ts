@@ -7,7 +7,7 @@ export async function topicCreate(req: Request, res: Response) {
         const data = req.body;
         const topic = await createTopic(data);
 
-        return res.status(200).json({ message: `Success creating ${topic.name} topic` });
+        return res.status(200).json({ message: `Success creating '${topic.name}' topic` });
     } catch (e) {
         return res.status(500).json({ message: e });
     }

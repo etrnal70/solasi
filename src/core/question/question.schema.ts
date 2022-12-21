@@ -5,9 +5,10 @@ const choice = z
     .object({
         body: z.string(),
     })
-    .array();
+    .array()
+    .optional();
 
-const question = z.object({
+const questionBody = z.object({
     body: z.string(),
     image: z.string().url().optional(),
     type: z.nativeEnum(QuestionType),
@@ -15,20 +16,16 @@ const question = z.object({
 });
 
 export const questionCreateSchema = z.object({
-    body: z.object({
-        question,
-    }),
+    body: questionBody,
     params: z.object({
-        topicId: z.number(),
+        topicId: z.string(),
     }),
 });
 
 export const questionUpdateSchema = z.object({
-    body: z.object({
-        question,
-    }),
+    body: questionBody,
     params: z.object({
-        questionId: z.number(),
+        questionId: z.string(),
     }),
 });
 
@@ -39,4 +36,4 @@ export const questionFindSchema = z.object({
     }),
 });
 
-export type QuestionInput = z.infer<typeof question>;
+export type QuestionInput = z.infer<typeof questionBody>;

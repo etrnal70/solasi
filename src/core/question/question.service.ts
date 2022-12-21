@@ -11,16 +11,13 @@ export async function createQuestion(data: QuestionInput, topicId: number, autho
                 type: data.type,
                 body: data.body,
                 image: data.image,
-                choices: {
-                    createMany: {
-                        data: data.choices,
-                        skipDuplicates: true,
-                    },
-                },
             },
         });
+
+        // TODO Insert and connect choice
         return question;
     } else {
+        console.log("Here");
         const question = await dbConn.question.create({
             data: {
                 topicId,

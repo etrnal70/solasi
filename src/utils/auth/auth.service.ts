@@ -40,6 +40,14 @@ export async function generateToken(userId: number): Promise<Object | Error> {
 
   // Store credentials in database
   try {
+    // Clear existing credentials if exist
+    await dbConn.userCredential.deleteMany({
+      where: {
+        userId: userId,
+        OR: [{ type: "ACCESS" }, { type: "REFRESH" }],
+      },
+    });
+
     await dbConn.userCredential.create({
       data: {
         userId: userId,
@@ -55,7 +63,8 @@ export async function generateToken(userId: number): Promise<Object | Error> {
       },
     });
   } catch (e) {
-    return new Error("failed to insert validation uuid to db");
+    console.log(e);
+    return new Error("failed to insert validation uuid to db: " + e);
   }
 
   return { accessToken: accessToken, refreshToken: refreshToken };

@@ -1,15 +1,32 @@
 import { QuestionType } from "@prisma/client";
 import { Request, Response } from "express";
-import { createQuestion, findQuestion, getQuestion, updateQuestion } from "./question.service";
+import { EssayQuestion, MultipleChoiceQuestion } from "./question.schema";
+import {
+  createMultipleChoiceQuestion,
+  createEssayQuestion,
+  getQuestion,
+  updateQuestion,
+  findQuestion,
+} from "./question.service";
 
 export async function questionCreate(req: Request, res: Response) {
   try {
     const data = req.body;
     const { topicId } = req.params;
     const userId = req.user.id;
-    const question = await createQuestion(data, parseInt(topicId, 10), userId);
+    if (data.type == QuestionType.MULTIPLE_CHOICE) {
+      const question = await createMultipleChoiceQuestion(
+        data as MultipleChoiceQuestion,
+        parseInt(topicId, 10),
+        userId,
+      );
 
-    return res.status(201).json({ message: `Success creating question with id ${question.id}` });
+      return res.status(201).json({ message: `Success creating question with id ${question.id}` });
+    } else if (data.type == QuestionType.ESSAY) {
+      const question = await createEssayQuestion(data as EssayQuestion, parseInt(topicId, 10), userId);
+
+      return res.status(201).json({ message: `Success creating question with id ${question.id}` });
+    }
   } catch (e) {
     if (e instanceof Error) return res.status(500).json({ message: e.message });
   }

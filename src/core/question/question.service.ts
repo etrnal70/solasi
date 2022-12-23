@@ -1,34 +1,35 @@
 import { QuestionType } from "@prisma/client";
 import { dbConn } from "../../utils/db";
-import { QuestionInput } from "./question.schema";
+import { EssayQuestion, MultipleChoiceQuestion, QuestionInput } from "./question.schema";
 
-export async function createQuestion(data: QuestionInput, topicId: number, authorId: number) {
-  if (data.type == QuestionType.MULTIPLE_CHOICE) {
-    const question = await dbConn.question.create({
-      data: {
-        authorId,
-        topicId,
-        type: data.type,
-        body: data.body,
-        image: data.image,
+export async function createMultipleChoiceQuestion(data: MultipleChoiceQuestion, topicId: number, authorId: number) {
+  const question = await dbConn.question.create({
+    data: {
+      authorId,
+      topicId,
+      type: data.type,
+      body: data.body,
+      image: data.image,
+      choices: {
+        create: data.choices,
       },
-    });
+    },
+  });
+  return question;
+}
 
-    // TODO Insert and connect choice
-    return question;
-  } else {
-    const question = await dbConn.question.create({
-      data: {
-        topicId,
-        authorId,
-        type: data.type,
-        body: data.body,
-        image: data.image,
-      },
-    });
+export async function createEssayQuestion(data: EssayQuestion, topicId: number, authorId: number) {
+  const question = await dbConn.question.create({
+    data: {
+      topicId,
+      authorId,
+      type: data.type,
+      body: data.body,
+      image: data.image,
+    },
+  });
 
-    return question;
-  }
+  return question;
 }
 
 export async function getQuestion(topicId: number) {
@@ -46,6 +47,7 @@ export async function getQuestion(topicId: number) {
           profileImage: true,
         },
       },
+      choices: true,
     },
   });
 

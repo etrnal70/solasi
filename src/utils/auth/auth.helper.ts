@@ -20,6 +20,7 @@ export async function verifyAccessToken(req: Request, res: Response, next: NextF
       });
     }
 
+    // TODO How should we fix this smh
     const verifiedToken = verify(token, JWT_SECRET);
     const decoded = verifiedToken as CustomJwtPayload;
     await getAuthData(decoded.id, decoded.uuid, "ACCESS");

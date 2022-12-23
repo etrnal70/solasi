@@ -63,7 +63,6 @@ export async function generateToken(userId: number): Promise<Object | Error> {
       },
     });
   } catch (e) {
-    console.log(e);
     return new Error("failed to insert validation uuid to db: " + e);
   }
 

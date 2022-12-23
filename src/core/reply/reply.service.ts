@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { dbConn } from "../../utils/db";
 import { ReplyInput } from "./reply.schema";
 
@@ -67,6 +68,10 @@ export async function upvoteReply(replyId: number, giverId: number) {
       },
     });
 
+    if (upvotedReply instanceof Prisma.PrismaClientKnownRequestError && upvotedReply.code === "P2002") {
+      return new Error("user already upvoted");
+    }
+
     return upvotedReply;
   }
 
@@ -91,7 +96,11 @@ export async function downvoteReply(replyId: number, giverId: number) {
       },
     });
 
-    return downvotedReply;
+    if (downvotedReply instanceof Prisma.PrismaClientKnownRequestError && downvotedReply.code === "P2002") {
+      return new Error("user already downvoted");
+    } else {
+      return downvotedReply;
+    }
   }
 
   return reply;

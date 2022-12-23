@@ -69,7 +69,7 @@ model Question {
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
 
-  choices QuestionChoice? @relation("questionChoice")
+  choices QuestionChoice[]
   replies Reply[]
 }
 
@@ -81,8 +81,8 @@ enum QuestionType {
 model QuestionChoice {
   id         Int      @id @default(autoincrement())
   body       String
-  question   Question @relation("questionChoice", fields: [questionId], references: [id])
-  questionId Int      @unique
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId Int
 }
 
 model Reply {

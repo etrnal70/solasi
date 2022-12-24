@@ -11,35 +11,45 @@ interface CustomJwtPayload extends JwtPayload {
   uuid: string;
 }
 
-export async function verifyAccessToken(req: Request, res: Response, next: NextFunction) {
+export async function verifyToken(req: Request, res: Response, next: NextFunction) {
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "") as string;
     if (!token) {
-      return res.status(400).send({
+      return res.status(400).json({
         message: "missing 'Authentication' header",
       });
     }
 
-    // TODO How should we fix this smh
-    const verifiedToken = verify(token, JWT_SECRET);
-    const decoded = verifiedToken as CustomJwtPayload;
-    await getAuthData(decoded.id, decoded.uuid, "ACCESS");
-    req.user = new UserAuth(decoded.userId, decoded.uuid);
+    verify(token, JWT_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: err });
+      }
+      const token = decoded as CustomJwtPayload;
+      req.user = new UserAuth(token.userId, token.uuid);
+      return next();
+    });
+  } catch (e) {
+    return res.status(401).json({ message: e });
+  }
+}
 
+export async function verifyAccessPair(req: Request, res: Response, next: NextFunction) {
+  try {
+    await getAuthData(req.user.id, req.user.uuid, "ACCESS");
     return next();
   } catch (e) {
     // TODO Map prisma error
     if (e instanceof PrismaClientKnownRequestError) {
-      return res.status(401).send(e);
+      return res.status(401).json({ message: e });
     }
   }
 }
 
-export async function verifyRefreshToken(req: Request, res: Response, next: NextFunction) {
+export async function verifyRefreshPair(req: Request, res: Response, next: NextFunction) {
   const token = req.body.refreshToken as string;
   try {
     if (!token) {
-      return res.status(400).send({ message: "missing field 'refreshToken'" });
+      return res.status(400).json({ message: "missing field 'refreshToken'" });
     }
 
     const decoded = verify(token, JWT_SECRET) as CustomJwtPayload;
@@ -50,7 +60,7 @@ export async function verifyRefreshToken(req: Request, res: Response, next: Next
   } catch (e) {
     // TODO Map prisma error
     if (e instanceof PrismaClientKnownRequestError) {
-      return res.status(401).send(e);
+      return res.status(401).json({ message: e });
     }
   }
 }

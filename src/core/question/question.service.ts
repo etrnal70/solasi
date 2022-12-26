@@ -43,8 +43,10 @@ export async function getQuestion(topicId: number) {
       updatedAt: true,
       author: {
         select: {
+          id: true,
           username: true,
           profileImage: true,
+          scores: true,
         },
       },
       choices: true,
@@ -66,8 +68,10 @@ export async function updateQuestion(data: QuestionInput, questionId: number) {
       updatedAt: true,
       author: {
         select: {
+          id: true,
           username: true,
           profileImage: true,
+          scores: true,
         },
       },
     },
@@ -88,8 +92,10 @@ export async function findQuestion(keyword: string, type?: QuestionType) {
         updatedAt: true,
         author: {
           select: {
+            id: true,
             username: true,
             profileImage: true,
+            scores: true,
           },
         },
       },
@@ -107,8 +113,10 @@ export async function findQuestion(keyword: string, type?: QuestionType) {
       updatedAt: true,
       author: {
         select: {
+          id: true,
           username: true,
           profileImage: true,
+          scores: true,
         },
       },
     },

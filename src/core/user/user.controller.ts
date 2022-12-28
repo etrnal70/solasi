@@ -24,7 +24,7 @@ export async function userLogin(req: Request, res: Response) {
     const data = req.body;
     const tokenPair = await verifyCredsUser(data);
     if (tokenPair instanceof Error) {
-      return res.status(400).json(tokenPair.message);
+      return res.status(400).json({ message: tokenPair.message });
     }
 
     return res.status(200).json(tokenPair);

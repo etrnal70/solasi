@@ -30,8 +30,6 @@ export async function updateReply(data: ReplyInput, replyId: number) {
 }
 
 export async function getQuestionReplies(questionId: number) {
-  // TODO Get up/downvote number on each replies
-  // TODO Which data should be included ?
   const replies = await dbConn.reply.findMany({
     where: { questionId },
     include: {
@@ -44,8 +42,6 @@ export async function getQuestionReplies(questionId: number) {
 }
 
 export async function getUserReplies(userId: number) {
-  // TODO Get up/downvote number on each replies
-  // TODO Which data should be included ?
   const replies = await dbConn.reply.findMany({
     where: { authorId: userId },
     include: {
@@ -57,69 +53,155 @@ export async function getUserReplies(userId: number) {
 }
 
 export async function upvoteReply(replyId: number, giverId: number) {
-  const reply = await dbConn.reply.findFirst({ where: { id: replyId } });
-  if (reply) {
+  const tx = await dbConn.$transaction(async (tx) => {
+    const reply = await tx.reply.findFirst({ where: { id: replyId } });
+    if (reply == null) {
+      return new Error(`error: reply with id ${replyId} not exist`);
+    }
     // Delete any downvoted relation
     try {
-      await dbConn.downvote.delete({
-        where: { userId_givenById_replyId: { userId: reply.authorId, givenById: giverId, replyId: reply.id } },
-      });
+      await undoDownvoteReply(replyId, giverId);
     } catch (e) {}
 
-    const upvoteTx = await dbConn.$transaction([
-      dbConn.upvote.create({
-        data: {
+    const upvoteRelation = await tx.upvote.create({
+      data: {
+        userId: reply.authorId,
+        givenById: giverId,
+        replyId: reply.id,
+      },
+    });
+
+    if (upvoteRelation instanceof Prisma.PrismaClientKnownRequestError && upvoteRelation.code === "P2002") {
+      return new Error("error: user already upvoted");
+    }
+
+    await tx.user.update({
+      where: { id: reply.authorId },
+      data: { scores: { increment: 2 } },
+    });
+
+    return upvoteRelation;
+  });
+
+  return tx;
+}
+
+export async function undoUpvoteReply(replyId: number, giverId: number) {
+  const tx = dbConn.$transaction(async (tx) => {
+    // Check if reply exist
+    const reply = await tx.reply.findFirst({ where: { id: replyId } });
+    if (reply == null) {
+      return new Error(`error: reply with id ${replyId} not exist`);
+    }
+
+    // Check if relation exist
+    const relationExist = await tx.upvote.findUnique({
+      where: {
+        userId_givenById_replyId: {
           userId: reply.authorId,
           givenById: giverId,
           replyId: reply.id,
         },
-      }),
-      dbConn.user.update({
-        where: { id: reply.authorId },
-        data: { scores: { increment: 2 } },
-      }),
-    ]);
+      },
+    });
 
-    if (upvoteTx[0] instanceof Prisma.PrismaClientKnownRequestError && upvoteTx[0].code === "P2002") {
-      return new Error("user already upvoted");
+    if (relationExist == null) {
+      return new Error(`error: relation between reply and given upvote not found`);
     }
 
-    return upvoteTx[0];
-  }
+    await tx.user.update({
+      where: { id: reply.authorId },
+      data: { scores: { decrement: 2 } },
+    });
 
-  return reply;
+    return await tx.upvote.delete({
+      where: {
+        userId_givenById_replyId: {
+          userId: reply.authorId,
+          givenById: giverId,
+          replyId: reply.id,
+        },
+      },
+    });
+  });
+
+  return tx;
 }
 
 export async function downvoteReply(replyId: number, giverId: number) {
-  const reply = await dbConn.reply.findFirst({ where: { id: replyId } });
-  if (reply) {
+  const tx = dbConn.$transaction(async (tx) => {
+    // Check if reply exist
+    const reply = await tx.reply.findFirst({ where: { id: replyId } });
+    if (reply == null) {
+      return new Error(`error: reply with id ${replyId} not exist`);
+    }
+
     // Delete any upvoted relation
     try {
-      await dbConn.upvote.delete({
-        where: { userId_givenById_replyId: { userId: reply.authorId, givenById: giverId, replyId: reply.id } },
-      });
+      await undoUpvoteReply(replyId, giverId);
     } catch (e) {}
 
-    const downvoteTx = await dbConn.$transaction([
-      dbConn.downvote.create({
-        data: {
+    const downvoteRelation = await tx.downvote.create({
+      data: {
+        userId: reply.authorId,
+        givenById: giverId,
+        replyId: reply.id,
+      },
+    });
+
+    if (downvoteRelation instanceof Prisma.PrismaClientKnownRequestError && downvoteRelation.code === "P2002") {
+      return new Error("error: user already downvoted");
+    }
+
+    await dbConn.user.update({
+      where: { id: reply.authorId },
+      data: { scores: { decrement: 3 } },
+    });
+
+    return downvoteRelation;
+  });
+
+  return tx;
+}
+
+export async function undoDownvoteReply(replyId: number, giverId: number) {
+  const tx = dbConn.$transaction(async (tx) => {
+    // Check if reply exist
+    const reply = await tx.reply.findFirst({ where: { id: replyId } });
+    if (reply == null) {
+      return new Error(`error: reply with id ${replyId} not exist`);
+    }
+
+    // Check if relation exist
+    const relationExist = await tx.downvote.findUnique({
+      where: {
+        userId_givenById_replyId: {
           userId: reply.authorId,
           givenById: giverId,
           replyId: reply.id,
         },
-      }),
-      dbConn.user.update({
-        where: { id: reply.authorId },
-        data: { scores: { decrement: 3 } },
-      }),
-    ]);
+      },
+    });
 
-    if (downvoteTx[0] instanceof Prisma.PrismaClientKnownRequestError && downvoteTx[0].code === "P2002") {
-      return new Error("user already downvoted");
-    } else {
-      return downvoteTx[0];
+    if (relationExist == null) {
+      return new Error(`error: relation between reply and given downvote not found`);
     }
-  }
 
-  return reply;
+    await tx.user.update({
+      where: { id: reply.authorId },
+      data: { scores: { increment: 3 } },
+    });
+
+    return await tx.downvote.delete({
+      where: {
+        userId_givenById_replyId: {
+          userId: reply.authorId,
+          givenById: giverId,
+          replyId: reply.id,
+        },
+      },
+    });
+  });
+
+  return tx;
 }

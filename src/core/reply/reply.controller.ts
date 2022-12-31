@@ -4,6 +4,8 @@ import {
   downvoteReply,
   getQuestionReplies,
   getUserReplies,
+  undoDownvoteReply,
+  undoUpvoteReply,
   updateReply,
   upvoteReply,
 } from "./reply.service";
@@ -53,13 +55,25 @@ export async function replyGet(req: Request, res: Response) {
 export async function replyUpvote(req: Request, res: Response) {
   try {
     const { replyId } = req.params;
+    const { action } = req.query;
     const userId = req.user.id;
-    const upvote = await upvoteReply(parseInt(replyId, 10), userId);
-    if (upvote instanceof Error) {
-      return res.status(400).json({ message: upvote.message });
-    }
+    if (action == "apply") {
+      const upvote = await upvoteReply(parseInt(replyId, 10), userId);
+      if (upvote instanceof Error) {
+        return res.status(400).json({ message: upvote.message });
+      }
 
-    return res.status(201).json({ message: `Success upvoting on reply with id ${upvote?.replyId}` });
+      return res.status(201).json({ message: `Success upvoting on reply with id ${upvote?.replyId}` });
+    } else if (action == "remove") {
+      const undoUpvote = await undoUpvoteReply(parseInt(replyId, 10), userId);
+      if (undoUpvote instanceof Error) {
+        return res.status(400).json({ message: undoUpvote.message });
+      }
+
+      return res.status(201).json({ message: `Success undoing upvote on reply with id ${undoUpvote?.replyId}` });
+    } else {
+      return res.status(400).json({ message: "Invalid 'action' query parameter value" });
+    }
   } catch (e) {
     if (e instanceof Error) {
       return res.status(500).json({ message: e.message });
@@ -72,13 +86,25 @@ export async function replyUpvote(req: Request, res: Response) {
 export async function replyDownvote(req: Request, res: Response) {
   try {
     const { replyId } = req.params;
+    const { action } = req.query;
     const userId = req.user.id;
-    const downvote = await downvoteReply(parseInt(replyId, 10), userId);
-    if (downvote instanceof Error) {
-      return res.status(400).json({ message: downvote.message });
-    }
+    if (action == "apply") {
+      const downvote = await downvoteReply(parseInt(replyId, 10), userId);
+      if (downvote instanceof Error) {
+        return res.status(400).json({ message: downvote.message });
+      }
 
-    return res.status(201).json({ message: `Success downvoting on reply with id ${downvote?.replyId}` });
+      return res.status(201).json({ message: `Success downvoting on reply with id ${downvote?.replyId}` });
+    } else if (action == "remove") {
+      const undoDownvote = await undoDownvoteReply(parseInt(replyId, 10), userId);
+      if (undoDownvote instanceof Error) {
+        return res.status(400).json({ message: undoDownvote.message });
+      }
+
+      return res.status(201).json({ message: `Success downvoting on reply with id ${undoDownvote?.replyId}` });
+    } else {
+      return res.status(400).json({ message: "Invalid 'action' query parameter value" });
+    }
   } catch (e) {
     if (e instanceof Error) {
       return res.status(500).json({ message: e.message });

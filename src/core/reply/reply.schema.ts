@@ -1,34 +1,37 @@
 import { z } from "zod";
 
 const replyBody = z.object({
-    body: z.string(),
-    image: z.string().url().optional(),
+  body: z.string(),
+  image: z.string().url().optional(),
 });
 
 export const replyCreateSchema = z.object({
-    body: replyBody,
-    params: z.object({
-        questionId: z.string(),
-    }),
+  body: replyBody,
+  params: z.object({
+    questionId: z.string(),
+  }),
 });
 
 export const replyUpdateSchema = z.object({
-    body: replyBody,
-    params: z.object({
-        replyId: z.string(),
-    }),
+  body: replyBody,
+  params: z.object({
+    replyId: z.string(),
+  }),
 });
 
 export const replyGetSchema = z.object({
-    params: z.object({
-        questionId: z.string(),
-    }),
+  params: z.object({
+    questionId: z.string(),
+  }),
 });
 
 export const replyVoteSchema = z.object({
-    params: z.object({
-        replyId: z.string(),
-    }),
+  params: z.object({
+    replyId: z.string(),
+  }),
+  query: z.object({
+    action: z.string(),
+  }),
 });
 
 export type ReplyInput = z.infer<typeof replyBody>;

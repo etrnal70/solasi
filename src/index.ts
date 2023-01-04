@@ -1,3 +1,4 @@
+import cors from "cors";
 import dotenv from "dotenv";
 import express, { Express } from "express";
 import { leaderboardRoute } from "./core/leaderboard/leaderboard.route";
@@ -14,6 +15,7 @@ const PORT: number = parseInt(process.env.PORT as string, 10);
 const server: Express = express();
 
 server.use(express.json());
+server.use(cors());
 server.use(express.static("public"));
 
 server.use(uploadRoute);

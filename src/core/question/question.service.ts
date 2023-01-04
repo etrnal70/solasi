@@ -117,7 +117,6 @@ export async function findQuestion(keyword: string, type?: QuestionType) {
         id: true,
         body: true,
         image: true,
-        type: true,
         createdAt: true,
         updatedAt: true,
         author: {
@@ -128,6 +127,9 @@ export async function findQuestion(keyword: string, type?: QuestionType) {
             scores: true,
           },
         },
+        topic: { select: { id: true, name: true, profileImage: true, grade: true } },
+        type: true,
+        choices: { select: { body: true, createdAt: true, updatedAt: true } },
       },
     });
 
@@ -139,7 +141,6 @@ export async function findQuestion(keyword: string, type?: QuestionType) {
         id: true,
         body: true,
         image: true,
-        type: true,
         createdAt: true,
         updatedAt: true,
         author: {
@@ -150,6 +151,9 @@ export async function findQuestion(keyword: string, type?: QuestionType) {
             scores: true,
           },
         },
+        topic: { select: { id: true, name: true, profileImage: true, grade: true } },
+        type: true,
+        choices: { select: { body: true, createdAt: true, updatedAt: true } },
       },
     });
 

@@ -45,7 +45,7 @@ enum CredentialType {
 
 model Topic {
   id           Int        @id @default(autoincrement())
-  name         String     @unique
+  name         String
   profileImage String?
   grade        TopicGrade
 
@@ -86,6 +86,8 @@ model QuestionChoice {
   body       String
   question   Question @relation(fields: [questionId], references: [id])
   questionId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Reply {

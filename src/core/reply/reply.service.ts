@@ -37,8 +37,32 @@ export async function getQuestionReplies(questionId: number) {
       author: { select: { id: true, username: true, profileImage: true, scores: true } },
     },
   });
+  const question = await dbConn.question.findUnique({
+    where: { id: questionId },
+    select: {
+      id: true,
+      body: true,
+      image: true,
+      createdAt: true,
+      updatedAt: true,
+      author: {
+        select: {
+          id: true,
+          username: true,
+          profileImage: true,
+          scores: true,
+        },
+      },
+      topic: { select: { id: true, name: true, profileImage: true, grade: true } },
+      type: true,
+      choices: { select: { body: true, createdAt: true, updatedAt: true } },
+    },
+  });
 
-  return replies;
+  return {
+    question,
+    replies,
+  };
 }
 
 export async function getUserReplies(userId: number) {

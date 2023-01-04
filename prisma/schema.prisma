@@ -75,7 +75,7 @@ model Question {
   choices QuestionChoice[]
   replies Reply[]
 
-  @@fulltext([body, type])
+  @@fulltext([body])
 }
 
 enum QuestionType {

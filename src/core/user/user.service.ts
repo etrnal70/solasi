@@ -91,6 +91,16 @@ export async function getProfileUser(userId: number) {
     where: { id: userId },
     select: {
       _count: { select: { acceptedUpvotes: true, acceptedDownvotes: true } },
+      questions: {
+        select: {
+          id: true,
+          topic: { select: { id: true, name: true, profileImage: true } },
+          body: true,
+          image: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
       id: true,
       username: true,
       email: true,

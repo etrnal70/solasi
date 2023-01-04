@@ -50,6 +50,8 @@ model Topic {
   grade        TopicGrade
 
   questions Question[]
+
+  @@unique([name, grade])
 }
 
 enum TopicGrade {

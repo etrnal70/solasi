@@ -109,10 +109,34 @@ export async function updateQuestion(data: QuestionInput, questionId: number) {
   return updatedQuestion;
 }
 
-export async function findQuestion(keyword: string, type?: QuestionType) {
+export async function findQuestion(keyword: string, type?: QuestionType, topicId?: number) {
   if (type) {
     const questions = await dbConn.question.findMany({
       where: { body: { search: keyword }, type },
+      select: {
+        id: true,
+        body: true,
+        image: true,
+        createdAt: true,
+        updatedAt: true,
+        author: {
+          select: {
+            id: true,
+            username: true,
+            profileImage: true,
+            scores: true,
+          },
+        },
+        topic: { select: { id: true, name: true, profileImage: true, grade: true } },
+        type: true,
+        choices: { select: { body: true, createdAt: true, updatedAt: true } },
+      },
+    });
+
+    return questions;
+  } else if (topicId) {
+    const questions = await dbConn.question.findMany({
+      where: { body: { search: keyword }, topicId },
       select: {
         id: true,
         body: true,

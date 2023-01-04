@@ -6,6 +6,7 @@ const choice = z
         body: z.string(),
     })
     .array()
+    .max(20)
     .optional();
 
 const questionBody = z.object({
@@ -53,12 +54,12 @@ export const questionTopicGetSchema = z.object({
     }),
 });
 
-export const questionFindSchema = z.object({
-    query: z.object({
-        keyword: z.string(),
-        type: z.nativeEnum(QuestionType),
-    }),
-});
+// export const questionFindSchema = z.object({
+//   query: z.object({
+//     keyword: z.string(),
+//     type: z.nativeEnum(QuestionType),
+//   }),
+// });
 
 export type QuestionInput = z.infer<typeof questionBody>;
 export type EssayQuestion = z.infer<typeof essayQuestion>;

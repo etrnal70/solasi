@@ -35,9 +35,13 @@ export async function questionCreate(req: Request, res: Response) {
 export async function questionGet(req: Request, res: Response) {
   try {
     const { topicId } = req.params;
-    const questions = await getQuestion(parseInt(topicId, 10));
-
-    return res.status(200).json(questions);
+    if (topicId == "") {
+      const questions = await getQuestion();
+      return res.status(200).json(questions);
+    } else {
+      const questions = await getQuestion(parseInt(topicId, 10));
+      return res.status(200).json(questions);
+    }
   } catch (e) {
     if (e instanceof Error) return res.status(500).json({ message: e.message });
   }

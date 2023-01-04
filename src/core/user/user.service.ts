@@ -26,6 +26,11 @@ export async function verifyCredsUser(data: UserCore) {
     select: {
       id: true,
       email: true,
+      username: true,
+      profileImage: true,
+      description: true,
+      createdAt: true,
+      updatedAt: true,
       password: true,
     },
   });
@@ -36,7 +41,10 @@ export async function verifyCredsUser(data: UserCore) {
         const userId = user.id;
         const tokenPair = await generateToken(userId);
 
-        return tokenPair;
+        return {
+          token: tokenPair,
+          ...user,
+        };
       } catch (e) {
         return e;
       }

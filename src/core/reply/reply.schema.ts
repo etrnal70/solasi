@@ -30,7 +30,7 @@ export const replyVoteSchema = z.object({
     replyId: z.string(),
   }),
   query: z.object({
-    action: z.string(),
+    action: z.enum(["apply", "remove"] as const),
   }),
 });
 

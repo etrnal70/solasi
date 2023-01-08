@@ -19,7 +19,7 @@ export async function replyCreate(req: Request, res: Response) {
 
     return res.status(201).json(reply);
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -31,7 +31,7 @@ export async function replyUpdate(req: Request, res: Response) {
 
     return res.status(200).json(updatedReply);
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -48,7 +48,7 @@ export async function replyGet(req: Request, res: Response) {
       return res.status(200).json(replies);
     }
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -60,26 +60,20 @@ export async function replyUpvote(req: Request, res: Response) {
     if (action == "apply") {
       const upvote = await upvoteReply(parseInt(replyId, 10), userId);
       if (upvote instanceof Error) {
-        return res.status(400).json({ message: upvote.message });
+        throw upvote;
       }
 
-      return res.status(201).json({ message: `Success upvoting on reply with id ${upvote?.replyId}` });
+      return res.status(200).json({ message: `Success upvoting on reply with id ${upvote?.replyId}` });
     } else if (action == "remove") {
       const undoUpvote = await undoUpvoteReply(parseInt(replyId, 10), userId);
       if (undoUpvote instanceof Error) {
-        return res.status(400).json({ message: undoUpvote.message });
+        throw undoUpvote;
       }
 
-      return res.status(201).json({ message: `Success undoing upvote on reply with id ${undoUpvote?.replyId}` });
-    } else {
-      return res.status(400).json({ message: "Invalid 'action' query parameter value" });
+      return res.status(200).json({ message: `Success undoing upvote on reply with id ${undoUpvote?.replyId}` });
     }
   } catch (e) {
-    if (e instanceof Error) {
-      return res.status(500).json({ message: e.message });
-    } else {
-      return res.status(500).json({ message: e });
-    }
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -91,25 +85,19 @@ export async function replyDownvote(req: Request, res: Response) {
     if (action == "apply") {
       const downvote = await downvoteReply(parseInt(replyId, 10), userId);
       if (downvote instanceof Error) {
-        return res.status(400).json({ message: downvote.message });
+        throw downvote;
       }
 
-      return res.status(201).json({ message: `Success downvoting on reply with id ${downvote?.replyId}` });
+      return res.status(200).json({ message: `Success downvoting on reply with id ${downvote?.replyId}` });
     } else if (action == "remove") {
       const undoDownvote = await undoDownvoteReply(parseInt(replyId, 10), userId);
       if (undoDownvote instanceof Error) {
-        return res.status(400).json({ message: undoDownvote.message });
+        throw undoDownvote;
       }
 
-      return res.status(201).json({ message: `Success downvoting on reply with id ${undoDownvote?.replyId}` });
-    } else {
-      return res.status(400).json({ message: "Invalid 'action' query parameter value" });
+      return res.status(200).json({ message: `Success downvoting on reply with id ${undoDownvote?.replyId}` });
     }
   } catch (e) {
-    if (e instanceof Error) {
-      return res.status(500).json({ message: e.message });
-    } else {
-      return res.status(500).json({ message: e });
-    }
+    return res.status(500).json({ message: (e as Error).message });
   }
 }

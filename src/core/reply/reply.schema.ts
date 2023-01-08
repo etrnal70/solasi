@@ -34,4 +34,10 @@ export const replyVoteSchema = z.object({
   }),
 });
 
+export const replyCheckVoteSchema = z.object({
+  params: z.object({
+    replyId: z.string(),
+  }),
+});
+
 export type ReplyInput = z.infer<typeof replyBody>;

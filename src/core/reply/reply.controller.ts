@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
 import {
   createReply,
+  downvoteCheck,
   downvoteReply,
   getQuestionReplies,
   getUserReplies,
   undoDownvoteReply,
   undoUpvoteReply,
   updateReply,
+  upvoteCheck,
   upvoteReply,
 } from "./reply.service";
 
@@ -77,6 +79,18 @@ export async function replyUpvote(req: Request, res: Response) {
   }
 }
 
+export async function replyCheckUpvote(req: Request, res: Response) {
+  try {
+    const { replyId } = req.params;
+    const userId = req.user.id;
+    const upvoteExist = await upvoteCheck(parseInt(replyId, 10), userId);
+
+    return res.status(200).json({ upvote: upvoteExist });
+  } catch (e) {
+    return res.status(500).json({ message: (e as Error).message });
+  }
+}
+
 export async function replyDownvote(req: Request, res: Response) {
   try {
     const { replyId } = req.params;
@@ -97,6 +111,18 @@ export async function replyDownvote(req: Request, res: Response) {
 
       return res.status(200).json({ message: `Success downvoting on reply with id ${undoDownvote?.replyId}` });
     }
+  } catch (e) {
+    return res.status(500).json({ message: (e as Error).message });
+  }
+}
+
+export async function replyCheckDownvote(req: Request, res: Response) {
+  try {
+    const { replyId } = req.params;
+    const userId = req.user.id;
+    const downvoteExist = await downvoteCheck(parseInt(replyId, 10), userId);
+
+    return res.status(200).json({ upvote: downvoteExist });
   } catch (e) {
     return res.status(500).json({ message: (e as Error).message });
   }

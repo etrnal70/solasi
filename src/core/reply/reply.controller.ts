@@ -122,7 +122,7 @@ export async function replyCheckDownvote(req: Request, res: Response) {
     const userId = req.user.id;
     const downvoteExist = await downvoteCheck(parseInt(replyId, 10), userId);
 
-    return res.status(200).json({ upvote: downvoteExist });
+    return res.status(200).json({ downvote: downvoteExist });
   } catch (e) {
     return res.status(500).json({ message: (e as Error).message });
   }

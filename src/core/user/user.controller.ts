@@ -15,7 +15,7 @@ export async function userRegister(req: Request, res: Response) {
 
     return res.status(201).json({ message: "Success creating user" });
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -29,7 +29,7 @@ export async function userLogin(req: Request, res: Response) {
 
     return res.status(200).json(tokenPair);
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -44,7 +44,7 @@ export async function userLogout(req: Request, res: Response) {
       return res.status(500).json({ message: "Failed to delete credentials" });
     }
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -57,7 +57,7 @@ export async function userFind(req: Request, res: Response) {
 
     return res.status(200).json(users);
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -68,7 +68,7 @@ export async function userGetProfile(req: Request, res: Response) {
 
     return res.status(200).json(userProfile);
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -79,7 +79,7 @@ export async function userGetPersonalProfile(req: Request, res: Response) {
 
     return res.status(200).json(userProfile);
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -91,6 +91,6 @@ export async function userUpdateProfile(req: Request, res: Response) {
 
     return res.status(200).json(updatedProfile);
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }

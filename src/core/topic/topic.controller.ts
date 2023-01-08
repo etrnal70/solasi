@@ -9,7 +9,7 @@ export async function topicCreate(req: Request, res: Response) {
 
     return res.status(200).json({ message: `Success creating '${topic.name}' topic` });
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -19,7 +19,7 @@ export async function topicGet(_req: Request, res: Response) {
 
     return res.status(200).json(topics);
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -31,6 +31,6 @@ export async function topicFind(req: Request, res: Response) {
 
     return res.status(200).json(topics);
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }

@@ -28,7 +28,7 @@ export async function questionCreate(req: Request, res: Response) {
       return res.status(201).json({ message: `Success creating question with id ${question.id}` });
     }
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -43,7 +43,7 @@ export async function questionGet(req: Request, res: Response) {
       return res.status(200).json(questions);
     }
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }
 
@@ -55,7 +55,7 @@ export async function questionUpdate(req: Request, res: Response) {
 
     return res.status(200).json(updatedQuestion);
   } catch (e) {
-    if (e instanceof Error) return res.status(500).send({ message: e.message });
+    return res.status(500).send({ message: (e as Error).message });
   }
 }
 
@@ -66,6 +66,6 @@ export async function questionFind(req: Request, res: Response) {
 
     return res.status(200).json(questions);
   } catch (e) {
-    if (e instanceof Error) return res.status(500).json({ message: e.message });
+    return res.status(500).json({ message: (e as Error).message });
   }
 }

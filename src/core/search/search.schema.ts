@@ -1,4 +1,4 @@
-import { QuestionType, TopicGrade } from "@prisma/client";
+import { TopicGrade, QuestionType } from "@prisma/client";
 import { z } from "zod";
 
 const scopeVals = ["user", "topic", "question"] as const;
